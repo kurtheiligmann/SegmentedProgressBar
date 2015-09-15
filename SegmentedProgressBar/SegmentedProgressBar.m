@@ -35,7 +35,11 @@ static CGFloat const kSegmentSeperatorWidth = 4.0;
     
     for (NSInteger i = 0; i < self.numberOfSegments; i++) {
         UIView *segment = [[UIView alloc] initWithFrame:CGRectMake(i * (segmentWidth + kSegmentSeperatorWidth), 0, segmentWidth, self.bounds.size.height)];
-        segment.backgroundColor = self.segmentColor;
+        if (i < self.numberOfCompletedSegments) {
+            segment.backgroundColor = self.completedSegmentColor;
+        } else {
+            segment.backgroundColor = self.segmentColor;
+        }
 
         if (i == 0) {
             UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:segment.bounds
