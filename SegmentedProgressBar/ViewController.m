@@ -10,7 +10,7 @@
 #import "ViewController.h"
 
 @interface ViewController ()
-
+@property (nonatomic, strong) IBOutlet SegmentedProgressBar *segmentedProgressBar;
 @end
 
 @implementation ViewController
@@ -18,17 +18,21 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    SegmentedProgressBar *segmentedProgressBar = [[SegmentedProgressBar alloc] initWithFrame:CGRectMake(10, 50, 180, 20)];
-    segmentedProgressBar.segmentColor = [UIColor blueColor];
+    self.segmentedProgressBar = [[SegmentedProgressBar alloc] initWithFrame:CGRectMake(10, 50, 180, 10)];
+    self.segmentedProgressBar.completedSegmentColor = [UIColor blueColor];
+    self.segmentedProgressBar.segmentColor = [self.segmentedProgressBar.completedSegmentColor colorWithAlphaComponent:0.4];
+    self.segmentedProgressBar.numberOfSegments = 8;
+    self.segmentedProgressBar.numberOfCompletedSegments = 3;
     
-    
-    [self.view addSubview:segmentedProgressBar];
-    
+    [self.view addSubview:self.segmentedProgressBar];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (IBAction)segButtonPressed {
+    self.segmentedProgressBar.numberOfCompletedSegments += 1;
+}
+
+- (IBAction)colorButtonPressed {
+    self.segmentedProgressBar.segmentColor = [UIColor purpleColor];
 }
 
 @end
