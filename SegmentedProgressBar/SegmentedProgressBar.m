@@ -8,12 +8,6 @@
 
 #import "SegmentedProgressBar.h"
 
-@interface SegmentedProgressBar ()
-
-@property (nonatomic, strong) NSArray *segmentViews;
-
-@end
-
 @implementation SegmentedProgressBar
 
 #pragma mark - UIView
