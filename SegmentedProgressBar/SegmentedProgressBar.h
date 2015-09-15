@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) IBInspectable UIColor *segmentColor;
 @property (nonatomic, strong) IBInspectable UIColor *completedSegmentColor;
+@property (nonatomic) IBInspectable CGFloat segmentSeperatorWidth;
 @property (nonatomic) IBInspectable NSInteger numberOfSegments;
 @property (nonatomic) IBInspectable NSInteger numberOfCompletedSegments;
 
