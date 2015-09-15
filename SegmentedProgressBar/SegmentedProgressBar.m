@@ -8,6 +8,8 @@
 
 #import "SegmentedProgressBar.h"
 
+static CGFloat const kSegmentSeperatorWidth = 4.0;
+
 @interface SegmentedProgressBar ()
 
 @property (nonatomic, strong) NSArray *segmentViews;
@@ -29,10 +31,10 @@
 - (void)updateSegments {
     [self removeSubviews];
     
-    CGFloat segmentWidth = self.bounds.size.width / self.numberOfSegments;
+    CGFloat segmentWidth = (self.bounds.size.width - ((self.numberOfSegments - 1) * kSegmentSeperatorWidth)) / self.numberOfSegments;
     
     for (NSInteger i = 0; i < self.numberOfSegments; i++) {
-        UIView *segment = [[UIView alloc] initWithFrame:CGRectMake(i * segmentWidth, 0, segmentWidth, self.bounds.size.height)];
+        UIView *segment = [[UIView alloc] initWithFrame:CGRectMake(i * (segmentWidth + kSegmentSeperatorWidth), 0, segmentWidth, self.bounds.size.height)];
         segment.backgroundColor = self.segmentColor;
 
         if (i == 0) {
@@ -59,6 +61,21 @@
 
 - (void)setSegmentColor:(UIColor *)segmentColor {
     _segmentColor = segmentColor;
+    [self updateSegments];
+}
+
+- (void)setCompletedSegmentColor:(UIColor *)completedSegmentColor {
+    _completedSegmentColor = completedSegmentColor;
+    [self updateSegments];
+}
+
+- (void)setNumberOfSegments:(NSInteger)numberOfSegments {
+    _numberOfSegments = numberOfSegments;
+    [self updateSegments];
+}
+
+- (void)setNumberOfCompletedSegments:(NSInteger)numberOfCompletedSegments {
+    _numberOfCompletedSegments = numberOfCompletedSegments;
     [self updateSegments];
 }
 
