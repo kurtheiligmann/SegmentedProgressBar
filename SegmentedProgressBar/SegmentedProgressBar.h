@@ -10,9 +10,10 @@
 
 @interface SegmentedProgressBar : UIView
 
-@property (nonatomic, strong) UIColor *segmentColor;
-@property (nonatomic, strong) UIColor *completedSegmentColor;
-@property (nonatomic) NSInteger numberOfSegments;
-@property (nonatomic) NSInteger numberOfCompletedSegments;
+@property (nonatomic, strong) IBInspectable UIColor *segmentColor;
+@property (nonatomic, strong) IBInspectable UIColor *completedSegmentColor;
+@property (nonatomic) IBInspectable CGFloat segmentSeperatorWidth;
+@property (nonatomic) IBInspectable NSInteger numberOfSegments;
+@property (nonatomic) IBInspectable NSInteger numberOfCompletedSegments;
 
 @end
