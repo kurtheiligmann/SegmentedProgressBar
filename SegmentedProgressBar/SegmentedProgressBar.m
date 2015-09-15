@@ -8,7 +8,7 @@
 
 #import "SegmentedProgressBar.h"
 
-static CGFloat const kSegmentSeperatorWidth = 4.0;
+static CGFloat const kSegmentSeperatorWidth = 2.0;
 
 @interface SegmentedProgressBar ()
 
@@ -18,14 +18,47 @@ static CGFloat const kSegmentSeperatorWidth = 4.0;
 
 @implementation SegmentedProgressBar
 
+#pragma mark - UIView
+
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        self.backgroundColor = [UIColor clearColor];
-        self.numberOfSegments = 3;
+        [self initializeDefaults];
         [self updateSegments];
     }
     
     return self;
+}
+
+#pragma mark - SegmentedProgressBar
+
+- (void)setSegmentColor:(UIColor *)segmentColor {
+    _segmentColor = segmentColor;
+    [self updateSegments];
+}
+
+- (void)setCompletedSegmentColor:(UIColor *)completedSegmentColor {
+    _completedSegmentColor = completedSegmentColor;
+    [self updateSegments];
+}
+
+- (void)setNumberOfSegments:(NSInteger)numberOfSegments {
+    _numberOfSegments = numberOfSegments;
+    [self updateSegments];
+}
+
+- (void)setNumberOfCompletedSegments:(NSInteger)numberOfCompletedSegments {
+    _numberOfCompletedSegments = numberOfCompletedSegments;
+    [self updateSegments];
+}
+
+#pragma mark - Private Methods
+
+- (void)initializeDefaults {
+    self.backgroundColor = [UIColor clearColor];
+    _numberOfSegments = 3;
+    _numberOfCompletedSegments = 0;
+    _completedSegmentColor = [UIColor blueColor];
+    _segmentColor = [_completedSegmentColor colorWithAlphaComponent:0.4];
 }
 
 - (void)updateSegments {
@@ -40,7 +73,7 @@ static CGFloat const kSegmentSeperatorWidth = 4.0;
         } else {
             segment.backgroundColor = self.segmentColor;
         }
-
+        
         if (i == 0) {
             UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:segment.bounds
                                                              byRoundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft
@@ -63,38 +96,10 @@ static CGFloat const kSegmentSeperatorWidth = 4.0;
     }
 }
 
-- (void)setSegmentColor:(UIColor *)segmentColor {
-    _segmentColor = segmentColor;
-    [self updateSegments];
-}
-
-- (void)setCompletedSegmentColor:(UIColor *)completedSegmentColor {
-    _completedSegmentColor = completedSegmentColor;
-    [self updateSegments];
-}
-
-- (void)setNumberOfSegments:(NSInteger)numberOfSegments {
-    _numberOfSegments = numberOfSegments;
-    [self updateSegments];
-}
-
-- (void)setNumberOfCompletedSegments:(NSInteger)numberOfCompletedSegments {
-    _numberOfCompletedSegments = numberOfCompletedSegments;
-    [self updateSegments];
-}
-
 - (void)removeSubviews {
     for (UIView *subview in self.subviews) {
         [subview removeFromSuperview];
     }
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 @end
