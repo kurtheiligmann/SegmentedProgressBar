@@ -21,31 +21,36 @@
     return self;
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    [self updateSegments];
+}
+
 #pragma mark - SegmentedProgressBar
 
 - (void)setSegmentColor:(UIColor *)segmentColor {
     _segmentColor = segmentColor;
-    [self updateSegments];
+    [self setNeedsLayout];
 }
 
 - (void)setCompletedSegmentColor:(UIColor *)completedSegmentColor {
     _completedSegmentColor = completedSegmentColor;
-    [self updateSegments];
+    [self setNeedsLayout];
 }
 
 - (void)setSegmentSeperatorWidth:(CGFloat)segmentSeperatorWidth {
     _segmentSeperatorWidth = segmentSeperatorWidth;
-    [self updateSegments];
+    [self setNeedsLayout];
 }
 
 - (void)setNumberOfSegments:(NSInteger)numberOfSegments {
     _numberOfSegments = numberOfSegments;
-    [self updateSegments];
+    [self setNeedsLayout];
 }
 
 - (void)setNumberOfCompletedSegments:(NSInteger)numberOfCompletedSegments {
     _numberOfCompletedSegments = numberOfCompletedSegments;
-    [self updateSegments];
+    [self setNeedsLayout];
 }
 
 #pragma mark - Private Methods
