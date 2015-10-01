@@ -12,17 +12,23 @@
 
 #pragma mark - UIView
 
+- (id)init {
+    if (self = [super init]) {
+        [self initializeDefaults];
+    }
+    
+    return self;
+}
+
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [self initializeDefaults];
-        [self updateSegments];
     }
     
     return self;
 }
 
 - (void)layoutSubviews {
-    [super layoutSubviews];
     [self updateSegments];
 }
 
@@ -65,37 +71,81 @@
 }
 
 - (void)updateSegments {
-    [self removeSubviews];
-    
-    CGFloat segmentWidth = (self.bounds.size.width - ((self.numberOfSegments - 1) * self.segmentSeperatorWidth)) / self.numberOfSegments;
-    
-    for (NSInteger i = 0; i < self.numberOfSegments; i++) {
-        UIView *segment = [[UIView alloc] initWithFrame:CGRectMake(i * (segmentWidth + self.segmentSeperatorWidth), 0, segmentWidth, self.bounds.size.height)];
-        if (i < self.numberOfCompletedSegments) {
-            segment.backgroundColor = self.completedSegmentColor;
-        } else {
-            segment.backgroundColor = self.segmentColor;
-        }
+    if (!CGRectEqualToRect(self.bounds, CGRectZero)) {
+        [self removeSubviews];
         
-        if (i == 0) {
-            UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:segment.bounds
-                                                             byRoundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft
-                                                                   cornerRadii:CGSizeMake(segment.frame.size.height / 2, segment.frame.size.height / 2)];
-            CAShapeLayer *shapeLayer = [[CAShapeLayer alloc] init];
-            shapeLayer.frame = segment.bounds;
-            shapeLayer.path = bezierPath.CGPath;
-            segment.layer.mask = shapeLayer;
-        } else if (i == (self.numberOfSegments - 1)) {
-            UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:segment.bounds
-                                                             byRoundingCorners:UIRectCornerTopRight | UIRectCornerBottomRight
-                                                                   cornerRadii:CGSizeMake(segment.frame.size.height / 2, segment.frame.size.height / 2)];
-            CAShapeLayer *shapeLayer = [[CAShapeLayer alloc] init];
-            shapeLayer.frame = segment.bounds;
-            shapeLayer.path = bezierPath.CGPath;
-            segment.layer.mask = shapeLayer;
-        }
+        CGFloat segmentWidth = MAX((self.bounds.size.width - ((self.numberOfSegments - 1) * self.segmentSeperatorWidth)) / self.numberOfSegments, 0);
         
-        [self addSubview:segment];
+        UIView *previousSegment = nil;
+        for (NSInteger i = 0; i < self.numberOfSegments; i++) {
+            UIView *segment = [[UIView alloc] initWithFrame:CGRectMake(0, 0, segmentWidth, self.bounds.size.height)];
+            segment.translatesAutoresizingMaskIntoConstraints = NO;
+            if (i < self.numberOfCompletedSegments) {
+                segment.backgroundColor = self.completedSegmentColor;
+            } else {
+                segment.backgroundColor = self.segmentColor;
+            }
+            
+            [self addSubview:segment];
+            
+            static NSString *segmentId = @"segment";
+            static NSString *previousSegmentId = @"previousSegment";
+            NSArray *hConstraints = nil;
+            if (i == 0) {
+                NSString *hFormat = [NSString stringWithFormat:@"H:|[%@(%f)]", segmentId, segmentWidth];
+                hConstraints = [NSLayoutConstraint constraintsWithVisualFormat:hFormat
+                                                                       options:kNilOptions
+                                                                       metrics:nil
+                                                                         views:@{segmentId : segment}];
+                
+                UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:segment.bounds
+                                                                 byRoundingCorners:UIRectCornerTopLeft | UIRectCornerBottomLeft
+                                                                       cornerRadii:CGSizeMake(segment.frame.size.height / 2, segment.frame.size.height / 2)];
+                CAShapeLayer *shapeLayer = [[CAShapeLayer alloc] init];
+                shapeLayer.frame = segment.bounds;
+                shapeLayer.path = bezierPath.CGPath;
+                segment.layer.mask = shapeLayer;
+            } else if (i == (self.numberOfSegments - 1)) {
+                NSString *hFormat = [NSString stringWithFormat:@"H:[%@]-%f-[%@(%f)]|",previousSegmentId, self.segmentSeperatorWidth, segmentId, segmentWidth];
+                hConstraints = [NSLayoutConstraint constraintsWithVisualFormat:hFormat
+                                                                       options:kNilOptions
+                                                                       metrics:nil
+                                                                         views:@{previousSegmentId : previousSegment,
+                                                                                 segmentId : segment}];
+                
+                UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRoundedRect:segment.bounds
+                                                                 byRoundingCorners:UIRectCornerTopRight | UIRectCornerBottomRight
+                                                                       cornerRadii:CGSizeMake(segment.frame.size.height / 2, segment.frame.size.height / 2)];
+                CAShapeLayer *shapeLayer = [[CAShapeLayer alloc] init];
+                shapeLayer.frame = segment.bounds;
+                shapeLayer.path = bezierPath.CGPath;
+                segment.layer.mask = shapeLayer;
+            } else {
+                NSString *hFormat = [NSString stringWithFormat:@"H:[%@]-%f-[%@(%f)]",previousSegmentId, self.segmentSeperatorWidth, segmentId, segmentWidth];
+                hConstraints = [NSLayoutConstraint constraintsWithVisualFormat:hFormat
+                                                                       options:kNilOptions
+                                                                       metrics:nil
+                                                                         views:@{previousSegmentId : previousSegment,
+                                                                                 segmentId : segment}];
+                
+            }
+            
+            for (NSLayoutConstraint *hConstraint in hConstraints) {
+                hConstraint.priority = UILayoutPriorityDefaultLow;
+            }
+            
+            [self addConstraints:hConstraints];
+            
+            NSString *vFormat = [NSString stringWithFormat:@"V:|[%@]|", segmentId];
+            NSArray *vConstraints = [NSLayoutConstraint constraintsWithVisualFormat:vFormat
+                                                                            options:kNilOptions
+                                                                            metrics:nil
+                                                                              views:@{segmentId : segment}];
+            [self addConstraints:vConstraints];
+            
+            
+            previousSegment = segment;
+        }
     }
 }
 
